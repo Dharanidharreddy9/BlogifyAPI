@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter, Query, Body, Depends
-from .blogSchema import blogPost, PaginatedBlogResponse
+from .blogSchema import blogPost, PaginatedBlogResponse, updateBlogPost
 from .model import getBlogInfo, getMostCommentedPosts, createBlog, updateBlog, deleteBlog
 from typing import List
 from Global.Responses import no_response
@@ -11,15 +11,14 @@ from starlette import status
 router = APIRouter(tags=['Blog Management'], prefix="/web/v1/blog")
 
 
+
 # Get the blog Info
-@router.get("/", response_model=PaginatedBlogResponse)
+@router.get("/")
 async def get_blogs(numOfData: int, pageNum:int):
     try:
         blogInfo = getBlogInfo(numOfData, pageNum)
-        print(blogInfo, "blogInfo")
         return blogInfo
     except Exception as e:
-        print(e, "error")
         return no_response
 
 
@@ -28,7 +27,6 @@ async def most_commented_posts(limit: int = Query(5, ge=1, le=10)):
     try:
         return getMostCommentedPosts(limit)
     except Exception as e:
-        print(e, "error")
         return no_response
 
 
@@ -51,20 +49,21 @@ async def post_blog(blog: blogPost, token: str = Depends(decodeJWT)):
         return no_response
     
 
-@router.put("/updateBlogByTitle", response_model=dict)
-async def update_blog_by_title(title: str = Query(..., title="The title of the blog to update"),
-                               updated_data: dict = Body(..., description="Updated blog data"),
-                               token: str = Depends(decodeJWT)):
+@router.put("/updateBlog", response_model=dict)
+async def update_blog(updateBlogSchema: updateBlogPost,
+                      post_code: str = Query(..., post_code="The post code of the blog to update"),
+                    token: str = Depends(decodeJWT)):
     try:
-        return updateBlog(title, updated_data)
+        return updateBlog(post_code, updateBlogSchema)
     except Exception as e:
+        print(e, "errro")
         return no_response
 
 
-@router.delete("/deleteBlogByTitle", response_model=dict)
-async def delete_blog_by_title(title: str = Query(..., title="The title of the blog to delete"), 
-                               token: str = Depends(decodeJWT)):
+@router.delete("/deleteBlog", response_model=dict)
+async def delete_blog(post_code: str = Query(..., post_code="The post code of the blog to delete"), 
+                    token: str = Depends(decodeJWT)):
     try:
-        return deleteBlog(title)
+        return deleteBlog(post_code)
     except Exception as e:
         return no_response

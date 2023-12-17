@@ -1,12 +1,12 @@
 
-from fastapi import HTTPException, status
+
 from passlib.context import CryptContext
 from jose import jwt
-from datetime import datetime, timedelta
 from config import SECRET_KEY, ALGORITHM
-from .model import UserCredentials, JWTToken, UserModel
-from Global.Responses import no_response, authentication_failed
-from config import users_collection
+from Global.Responses import no_response
+
+
+
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

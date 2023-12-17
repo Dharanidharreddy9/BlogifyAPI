@@ -1,10 +1,11 @@
 
 from fastapi import APIRouter
-from.model import create_jwt_token
-from .model import UserCredentials, JWTToken
+from .model import create_jwt_token
+from .schema  import UserCredentials, JWTToken
 from Global.Responses import no_response, authentication_failed, required_fields
 from ..userRegistration.model import verify_user_credentials
-# from .userRegistration.model import verify_user_credentials
+
+
 
 
 router = APIRouter(tags=['User Login'], prefix="/web/v1/user")

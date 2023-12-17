@@ -2,22 +2,15 @@ from pydantic import BaseModel
 from typing import List
 from datetime import datetime
 from config import blog_posts_collection, comments_collection
-from Global.Responses import no_response, no_data, success_created, success_ok
+from Global.Responses import no_response, no_data, success_created, success_ok,  \
+                                code_exists
 from .blogSchema import list_serial
+from ..userRegistration.model import generateCode
 
 
-class blogPost(BaseModel):
-    title: str
-    content: str
-    author: str
-    creation_date : datetime
-    tags: List[str] = []
 
 
-class PaginatedBlogResponse(BaseModel):
-    blogs: List[blogPost]
-    total_count: int
-    page: int
+
 
 
 def getBlogInfo(numOfData: int = 10, pageNum: int = 1):
@@ -58,9 +51,22 @@ def getMostCommentedPosts(limit: int = 5):
 #         print(e, "error")
 #         return no_response
 
+
 def createBlog(blogData):
     try:
-        if blogData:            
+        if blogData:
+            if 'postCode' not in blogData or blogData['postCode'] is None or blogData['postCode'] == "":
+                blogData['postCode']= generateCode(range_=6, prefix='pt')
+
+            if 'postCode' in blogData:
+                if not blogData['postCode'].lower().startswith('pt_'):
+                    blogData['postCode'] = 'pt_' + blogData['postCode']
+
+            is_post_code = blog_posts_collection.find_one({"postCode": blogData['postCode']})
+            if is_post_code:
+                return code_exists
+
+            blogData['createdByDate'] = datetime.utcnow()
             blog_posts_collection.insert_one(blogData)        
             return success_created
         else:
@@ -69,20 +75,28 @@ def createBlog(blogData):
         return no_response
 
 
-def updateBlog(title, updated_data):
+def updateBlog(post_code, updated_data):
     try:
-        result = blog_posts_collection.update_one({"title": title}, {"$set": updated_data})
+        updated_data_dict = updated_data.dict()
+        updated_data_dict['updatedByDate'] = datetime.utcnow()
+
+        result = blog_posts_collection.update_one({"postCode": post_code},
+                                                    {"$set": {"title": updated_data_dict['title'],
+                                                            "content": updated_data_dict['content'],
+                                                            "author": updated_data_dict['author'],
+                                                            "updatedByDate": updated_data_dict['updatedByDate']}}
+                                                    )
         if result.modified_count > 0:
             return success_ok
         else:
-            return no_data 
+            return no_data
     except Exception as e:
         return no_response
 
 
-def deleteBlog(title):
+def deleteBlog(post_code):
     try:
-        result = blog_posts_collection.delete_one({"title": title})
+        result = blog_posts_collection.delete_one({"postCode": post_code})
         if result.deleted_count > 0:
             return success_ok
         else:

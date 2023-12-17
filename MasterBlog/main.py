@@ -19,5 +19,11 @@ def create_app():
     from MasterBlog.blogOpenAPI.blogPostsManage import view
     app.include_router(view.router)
 
+    from MasterBlog.blogOpenAPI.blogComments import view
+    app.include_router(view.router)
 
+    from MasterBlog.blogOpenAPI.blogTags import view
+    app.include_router(view.router)
+
+    
     return app
