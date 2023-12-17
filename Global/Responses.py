@@ -8,6 +8,7 @@ invalid_input = JSONResponse(content={"error": "Invalid input", "status_code": 4
 unprocessable_entity = JSONResponse(content={"error": "Unprocessable entity", "status_code": 422}, status_code=422)
 authentication_failed = JSONResponse(content={"error": "Authentication failed", "status_code": 401}, status_code=401)
 permission_denied = JSONResponse(content={"error": "Permission denied", "status_code": 403}, status_code=403)
+required_fields = JSONResponse(content={"error": "Required fields are missing", "status_code": 400},status_code=400)
 
 
 # Success messages

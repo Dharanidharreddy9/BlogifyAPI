@@ -10,8 +10,8 @@ db = client.blog_db
 
 blog_posts_collection = db["blog_posts"]
 users_collection = db["users"]
-comments_collection = db["comments"]
-tags_collection = db["tags"]
+comments_collection = db["blog_comments"]
+tags_collection = db["blog_tags"]
 
 
 SECRET_KEY = "TechActive@123"

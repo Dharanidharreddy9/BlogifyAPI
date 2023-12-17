@@ -1,26 +1,25 @@
 
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from datetime import timedelta
-from .control import validate_user_credentials, create_jwt_token
+from fastapi import APIRouter
+from.model import create_jwt_token
 from .model import UserCredentials, JWTToken
-from Global.Responses import no_response, authentication_failed
-from config import users_collection
+from Global.Responses import no_response, authentication_failed, required_fields
+from ..userRegistration.model import verify_user_credentials
+# from .userRegistration.model import verify_user_credentials
 
 
 router = APIRouter(tags=['User Login'], prefix="/web/v1/user")
 
 
-# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post("/login", response_model=JWTToken)
 async def login(credentials: UserCredentials):
     try:
-        user = validate_user_credentials(credentials)
+        if credentials.username is None or credentials.password is None:
+            return required_fields
+        user = verify_user_credentials(credentials.username, credentials.password)
         if not user or user.get('username') is None:
             return authentication_failed
-
         access_token = create_jwt_token(data={"sub": user.get('username')})
 
         return {"access_token": access_token}

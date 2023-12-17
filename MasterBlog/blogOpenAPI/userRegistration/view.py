@@ -1,19 +1,13 @@
 
 from fastapi import APIRouter, Depends
-from config import users_collection
-from bson import ObjectId
 from starlette import status
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from .model import users
-from pymongo import MongoClient
-from config import client
-from typing import Annotated
-from Global.Responses import no_response, success_created
-from .model import createUser
+from .schema import users
+from Global.Responses import no_response
+from Global.validate import decodeJWT
+from .model import createUser, updateUser, deleteUser
 
 
 router = APIRouter(tags=['User Registration'], prefix="/web/v1/Registration")
-
 
 
 
@@ -26,4 +20,19 @@ async def create_user(create_user_req: users):
         return no_response
 
 
-# I need to build the update delet methods also here
+@router.put("/update", response_model=dict)
+async def update_user(updated_user: users, current_user: users = Depends(decodeJWT)):
+    try:
+        response = updateUser(updated_user)
+        return response
+    except Exception as e:
+        return no_response
+    
+
+@router.delete("/delete", response_model=dict)
+async def delete_user(username: str, password: str, current_user: users = Depends(decodeJWT)):
+    try:
+        response = deleteUser(username, password)
+        return response
+    except Exception as e:
+        return no_response
