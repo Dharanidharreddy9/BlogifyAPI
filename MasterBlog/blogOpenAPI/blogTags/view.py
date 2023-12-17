@@ -8,7 +8,7 @@ router = APIRouter(tags=['Blog tags'], prefix="/web/v1/tags")
 
 
 
-
+# Add tags to a specific blog post.
 @router.post("/addtags")
 async def add_tags(tags: List[str],
                     post_code: str = Query(..., title="Post Code", description="Provide the post code for the blog post"),
@@ -20,7 +20,7 @@ async def add_tags(tags: List[str],
         return no_response
 
 
-
+# Filter blog posts by a specific tag.
 @router.get("/filterByTag", response_model=list)
 async def filter_posts_by_tag(tag: str = Query(..., title="Tag", description="Provide the tag to filter posts")):
     try:

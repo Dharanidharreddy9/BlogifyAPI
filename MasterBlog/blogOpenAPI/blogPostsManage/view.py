@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter, Query, Body, Depends
 from .blogSchema import blogPost, PaginatedBlogResponse, updateBlogPost
-from .model import getBlogInfo, getMostCommentedPosts, createBlog, updateBlog, deleteBlog
+from .model import getBlogInfo, searchBlogPosts, createBlog, updateBlog, deleteBlog
 from typing import List
 from Global.Responses import no_response
 from Global.validate import decodeJWT
@@ -12,7 +12,10 @@ router = APIRouter(tags=['Blog Management'], prefix="/web/v1/blog")
 
 
 
-# Get the blog Info
+
+
+
+# Get paginated blog information.
 @router.get("/")
 async def get_blogs(numOfData: int, pageNum:int):
     try:
@@ -22,34 +25,29 @@ async def get_blogs(numOfData: int, pageNum:int):
         return no_response
 
 
-@router.get("/mostCommentedPosts", response_model=List[blogPost])
-async def most_commented_posts(limit: int = Query(5, ge=1, le=10)):
+# Search for blog posts based on keywords.
+@router.get("/searchPosts")
+async def search_blog_posts(keywords: str = Query(..., title="Keywords", description="Comma-separated keywords for search")):
     try:
-        return getMostCommentedPosts(limit)
+        keyword_list = keywords.split(',')
+        blogs = searchBlogPosts(keyword_list)
+        return blogs
     except Exception as e:
+        print(e, "error")
         return no_response
-
-
-# @router.get("/searchBlogPosts/{keywords}")
-# async def search_blog_posts(keywords: str):
-#     try:
-#         keyword_list = keywords.split(',')
-#         blogs = searchBlogPosts(keyword_list)
-#         return blogs
-#     except Exception as e:
-#         print(e, "error")
-#         return no_response
     
 
+# Create a new blog post.
 @router.post("/createBlog", status_code=status.HTTP_201_CREATED)
-async def post_blog(blog: blogPost, token: str = Depends(decodeJWT)):
+async def post_blog(blog: blogPost, userCode: str, token: str = Depends(decodeJWT)):
     try:
-        return createBlog(dict(blog))
+        return createBlog(dict(blog), userCode)
     except Exception as e:
         return no_response
     
 
-@router.put("/updateBlog", response_model=dict)
+# Update an existing blog post.
+@router.put("/updateBlog")
 async def update_blog(updateBlogSchema: updateBlogPost,
                       post_code: str = Query(..., post_code="The post code of the blog to update"),
                     token: str = Depends(decodeJWT)):
@@ -60,6 +58,7 @@ async def update_blog(updateBlogSchema: updateBlogPost,
         return no_response
 
 
+# Delete an existing blog post.
 @router.delete("/deleteBlog", response_model=dict)
 async def delete_blog(post_code: str = Query(..., post_code="The post code of the blog to delete"), 
                     token: str = Depends(decodeJWT)):

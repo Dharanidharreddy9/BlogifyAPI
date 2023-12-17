@@ -13,6 +13,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 
+# This function Create a JWT token for the provided data.
 def create_jwt_token(data: dict):
     try:
         to_encode = data.copy()

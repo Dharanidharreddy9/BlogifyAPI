@@ -15,6 +15,16 @@ from Global.Responses import success_created, invalid_input, no_response, succes
 
 
 def generateCode(range_, prefix):
+    """
+    Generate a random code based on the specified range and prefix.
+
+    Args:
+        range_ (int): The length of the code.
+        prefix (str): The prefix to be added to the code.
+
+    Returns:
+        str: The generated code.
+    """
     if range_ == 6 and prefix:
         res = prefix +'_'+''.join(random.choices(string.ascii_uppercase + string.digits, k=range_))
         return res
@@ -23,10 +33,20 @@ def generateCode(range_, prefix):
         return res
 
 
+
 def createUser(userData):
+    """
+    Creates user in the user section.
+
+    Args:
+        userData (dict): User data containing information like 'userCode', 'email', 'username', and 'password'.
+
+    Returns:
+        dict: A response indicating the success or failure of the user creation.
+    """
     try:
         if 'userCode' not in userData or userData['userCode'] is None or userData['userCode'] == "":
-                userData['userCode']= generateCode(range_=6, prefix='pt')
+                userData['userCode'] = generateCode(range_=6, prefix='pt')
 
         if 'userCode' in userData:
             if not userData['userCode'].lower().startswith('ur_'):
@@ -36,27 +56,40 @@ def createUser(userData):
         if is_user_code:
             return code_exists
     
-        usernm = users_collection.find_one({"username": userData.username})
-        useremail = users_collection.find_one({"username": userData.email})
+        usernm = users_collection.find_one({"username": userData['username']})
+        useremail = users_collection.find_one({"email": userData['email']})
         if usernm or useremail:
             return user_exists
+
         if userData:    
             bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-            hashed_password = bcrypt_context.hash(userData.password)
+            hashed_password = bcrypt_context.hash(userData['password'])
 
-            users_collection.insert_one({"userCode":userData.userCode,
-                                         "email":userData.email,
-                                         "username": userData.username,
-                                        "Password": hashed_password,
-                                    })            
+            users_collection.insert_one({
+                "userCode": userData['userCode'],
+                "email": userData['email'],
+                "username": userData['username'],
+                "Password": hashed_password,
+            })            
             return success_created             
         else:
             return invalid_input
     except Exception as e:
+        print(e, "model")
         return no_response
 
 
 def verify_user_credentials(username: str, password: str):
+    """
+    Verify user credentials.
+
+    Args:
+        username (str): The username.
+        password (str): The password.
+
+    Returns:
+        dict: The user information if credentials are valid, else None.
+    """
     try:
         user = users_collection.find_one({"username": username})
         if user:
@@ -70,6 +103,16 @@ def verify_user_credentials(username: str, password: str):
 
 
 def updateUser(userCode: str, updatedUser: updateUserModel):
+    """
+    Update user information.
+
+    Args:
+        userCode (str): The user code to identify the user.
+        updatedUser (updateUserModel): The updated user data.
+
+    Returns:
+        dict: A response indicating the success or failure of the user update.
+    """
     try:
         # existing_user = verify_user_credentials(updatedUser.username, updatedUser.password)
         # if existing_user:
@@ -89,6 +132,15 @@ def updateUser(userCode: str, updatedUser: updateUserModel):
 
 
 def deleteUser(userCode: str):
+    """
+    Delete a user.
+
+    Args:
+        userCode (str): The user code to identify the user.
+
+    Returns:
+        dict: A response indicating the success or failure of the user deletion.
+    """
     try:
         result = users_collection.delete_one({"userCode": userCode})
         if result.deleted_count:

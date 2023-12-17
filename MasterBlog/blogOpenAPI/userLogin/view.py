@@ -12,7 +12,7 @@ router = APIRouter(tags=['User Login'], prefix="/web/v1/user")
 
 
 
-
+# This route Handle user login and return a JWT token on successful authentication.
 @router.post("/login", response_model=JWTToken)
 async def login(credentials: UserCredentials):
     try:

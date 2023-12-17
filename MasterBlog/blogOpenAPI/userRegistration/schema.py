@@ -14,3 +14,37 @@ class updateUserModel(BaseModel):
     username: StrictStr
     password: StrictStr
 
+
+
+createResp = {
+    201 : {
+        "description": "User Added",
+        "content": {
+            "application/json": {
+                "examples": {"example" : {"value" :
+                    {
+                        "statusCode": 201,
+                        "message" : "User Added"
+                }}}}}}}
+
+updateResp = {
+    200 : {
+        "description": "User Updated",
+        "content": {
+            "application/json": {
+                "examples": {"example" : {"value" :
+                    {
+                        "statusCode": 200,
+                        "message" : "User Updated"
+                }}}}}}}
+
+deleteResp = {
+    200 : {
+        "description": "User Deleted",
+        "content": {
+            "application/json": {
+                "examples": {"example" : {"value" :
+                    {
+                        "statusCode": 200,
+                        "message" : "User Deleted"
+                }}}}}}}
