@@ -3,7 +3,7 @@ from fastapi import APIRouter, Query, Body, Depends
 from .blogSchema import blogPost, PaginatedBlogResponse, updateBlogPost
 from .model import getBlogInfo, searchBlogPosts, createBlog, updateBlog, deleteBlog
 from typing import List
-from Global.Responses import no_response
+from Global.Responses import no_response, getBlogResp
 from Global.validate import decodeJWT
 from starlette import status
 
@@ -16,7 +16,7 @@ router = APIRouter(tags=['Blog Management'], prefix="/web/v1/blog")
 
 
 # Get paginated blog information.
-@router.get("/")
+@router.get("/", responses=getBlogResp)
 async def get_blogs(numOfData: int, pageNum:int):
     try:
         blogInfo = getBlogInfo(numOfData, pageNum)

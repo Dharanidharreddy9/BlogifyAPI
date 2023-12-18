@@ -1,8 +1,8 @@
 
 from fastapi import APIRouter, Depends
 from starlette import status
-from .schema import users, updateUserModel, createResp, updateResp, deleteResp
-from Global.Responses import no_response
+from .schema import users, updateUserModel
+from Global.Responses import no_response, createResp, updateResp, deleteResp
 from Global.validate import decodeJWT
 from .model import createUser, updateUser, deleteUser
 
