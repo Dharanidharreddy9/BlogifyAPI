@@ -6,7 +6,7 @@ from ..blogPostsManage.blogSchema import list_serial
 
 
 
-def addTagsToPost(post_code: str, tags: List[str]):
+def addTagsToPost(post_code: str, tags: List[str], username):
     """
     Add tags to a blog post. If the post does not exist, create it with the provided tags.
 
@@ -20,13 +20,13 @@ def addTagsToPost(post_code: str, tags: List[str]):
     try:
         blog_post = tags_collection.find_one({"postCode": post_code})
         if not blog_post:
-            tags_collection.insert_one({"postCode": post_code, "tags": tags})
+            tags_collection.insert_one({"username": username, "postCode": post_code, "tags": tags})
             return success_created
         existing_tags = blog_post.get("tags", [])
         updated_tags = list(set(existing_tags + tags))
 
         tags_collection.update_one({"postCode": post_code},
-                                    {"$set": {"tags": updated_tags}}
+                                    {"$set": {"username": username, "tags": updated_tags}}
                                     )
 
         return success_created

@@ -59,19 +59,19 @@ def create_app():
     """
 
     from MasterBlog.blogOpenAPI.userRegistration import view as user_registration_view
-    app.include_router(user_registration_view.router, tags=["Users"])
+    app.include_router(user_registration_view.router)
 
     from MasterBlog.blogOpenAPI.userLogin import view as user_login_view
-    app.include_router(user_login_view.router, tags=["Users"])
+    app.include_router(user_login_view.router)
 
     from MasterBlog.blogOpenAPI.blogPostsManage import view as blog_posts_manage_view
-    app.include_router(blog_posts_manage_view.router, tags=["Posts"])
+    app.include_router(blog_posts_manage_view.router)
 
     from MasterBlog.blogOpenAPI.blogComments import view as blog_comments_view
-    app.include_router(blog_comments_view.router, tags=["Comments"])
+    app.include_router(blog_comments_view.router)
 
     from MasterBlog.blogOpenAPI.blogTags import view as blog_tags_view
-    app.include_router(blog_tags_view.router, tags=["Tags"])
+    app.include_router(blog_tags_view.router)
 
     return app
 

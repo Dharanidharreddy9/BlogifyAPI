@@ -39,9 +39,10 @@ async def search_blog_posts(keywords: str = Query(..., title="Keywords", descrip
 
 # Create a new blog post.
 @router.post("/createBlog", status_code=status.HTTP_201_CREATED)
-async def post_blog(blog: blogPost, userCode: str, token: str = Depends(decodeJWT)):
+async def post_blog(blog: blogPost, token: str = Depends(decodeJWT)):
     try:
-        return createBlog(dict(blog), userCode)
+        username = token['username']
+        return createBlog(dict(blog), username)
     except Exception as e:
         return no_response
     

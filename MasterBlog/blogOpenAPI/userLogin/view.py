@@ -21,7 +21,7 @@ async def login(credentials: UserCredentials):
         user = verify_user_credentials(credentials.username, credentials.password)
         if not user or user.get('username') is None:
             return authentication_failed
-        access_token = create_jwt_token(data={"sub": user.get('username')})
+        access_token = create_jwt_token(data={"username": user.get('username')})
 
         return {"access_token": access_token}
     except Exception as e:

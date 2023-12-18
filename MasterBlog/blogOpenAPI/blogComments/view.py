@@ -16,7 +16,8 @@ async def add_comment(comment: Comment,
                     post_code: str = Query(..., title="Post Code", description="Provide the post code for the blog post"),    
                     token: str = Depends(decodeJWT)):
     try:            
-        result = addCommentToPost(post_code, comment)
+        username = token['username']
+        result = addCommentToPost(post_code, comment, username)
         return result
     except Exception as e:
         return no_response

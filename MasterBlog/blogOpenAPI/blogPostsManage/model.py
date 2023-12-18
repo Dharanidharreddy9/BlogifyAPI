@@ -70,7 +70,7 @@ def searchBlogPosts(keywords: List[str]):
 
 
 # Function to create a new blog post.
-def createBlog(blogData, userCode):
+def createBlog(blogData, username):
     """
     Create a new blog post.
 
@@ -93,7 +93,7 @@ def createBlog(blogData, userCode):
             if is_post_code:
                 return code_exists
             
-            blogData['userCode'] = userCode
+            blogData['username'] = username
             blogData['creation_date'] = datetime.utcnow()
             blog_posts_collection.insert_one(blogData)        
             return success_created

@@ -14,7 +14,8 @@ async def add_tags(tags: List[str],
                     post_code: str = Query(..., title="Post Code", description="Provide the post code for the blog post"),
                     token: str = Depends(decodeJWT)):
     try:            
-        result = addTagsToPost(post_code, tags)
+        username = token['username']
+        result = addTagsToPost(post_code, tags, username)
         return result
     except Exception as e:
         return no_response

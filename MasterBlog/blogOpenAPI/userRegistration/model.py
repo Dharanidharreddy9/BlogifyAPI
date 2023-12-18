@@ -46,7 +46,7 @@ def createUser(userData):
     """
     try:
         if 'userCode' not in userData or userData['userCode'] is None or userData['userCode'] == "":
-                userData['userCode'] = generateCode(range_=6, prefix='pt')
+                userData['userCode'] = generateCode(range_=6, prefix='ur')
 
         if 'userCode' in userData:
             if not userData['userCode'].lower().startswith('ur_'):
@@ -119,7 +119,7 @@ def updateUser(userCode: str, updatedUser: updateUserModel):
         bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
         hashed_password = bcrypt_context.hash(updatedUser.password)
         result = users_collection.update_one({"userCode": userCode},
-                                            {"$set": {"username": updatedUser.username, "password": hashed_password}}
+                                            {"$set": {"username": updatedUser.username, "Password": hashed_password}}
                                             )
         if result.matched_count:
             return success_ok
